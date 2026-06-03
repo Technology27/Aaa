@@ -1,1 +1,599 @@
+Here is an HTML document that creates an exam platform based on your provided image interface.
 
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>منصة الاختبارات | نموذج متقدم</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9eef3 0%, #dce3ec 100%);
+            font-family: 'Segoe UI', 'Tahoma', 'Roboto', 'Cairo', system-ui, sans-serif;
+            padding: 30px 20px;
+            color: #1a2c3e;
+        }
+
+        /* الحاوية الرئيسية */
+        .exam-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 42px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* الهيدر مع الوقت والموقع المتبقي */
+        .exam-header {
+            background: #0b2b3b;
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 4px solid #ffb74d;
+        }
+
+        .location-badge {
+            background: #ffecd6;
+            padding: 6px 20px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #b45f1b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .time-remaining {
+            background: #102b36;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffdc97;
+            letter-spacing: 1px;
+            border: 1px solid #2c5a6b;
+        }
+
+        /* معلومات المستخدم والإحصائيات */
+        .stats-panel {
+            background: #f8fafd;
+            padding: 18px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .user-info {
+            font-weight: 700;
+            background: #eef2f7;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .questions-summary {
+            background: white;
+            border-radius: 32px;
+            padding: 6px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e4663;
+        }
+
+        /* لوحة التقدم (أ و ب) */
+        .progress-letters {
+            display: flex;
+            gap: 45px;
+            background: #ffffffec;
+            padding: 14px 32px;
+            border-bottom: 1px solid #e9edf2;
+            flex-wrap: wrap;
+        }
+
+        .letter-group {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-weight: 600;
+            background: #f3f6fc;
+            padding: 5px 20px;
+            border-radius: 50px;
+        }
+
+        .letter {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1f5e7e;
+            margin-left: 6px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        .answered-yes {
+            color: #2b7e3a;
+            background: #e0f2e3;
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+
+        .answered-no {
+            color: #b13e3e;
+            background: #ffe6e5;
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+
+        /* القسم الأساسي: السؤال + الخيارات */
+        .question-area {
+            padding: 32px 32px 20px 32px;
+            background: #ffffff;
+        }
+
+        .q-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #3b6e8b;
+            background: #eef3fc;
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #0a2f3f;
+            margin-bottom: 28px;
+            line-height: 1.4;
+            background: #fefbf5;
+            padding: 20px 24px;
+            border-radius: 32px;
+            border-right: 6px solid #ffb74d;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        /* خيارات الاختيار كأزرار */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin: 30px 0 28px;
+        }
+
+        .option-btn {
+            background: #f4f8fe;
+            border: 2px solid #dce5ef;
+            border-radius: 60px;
+            padding: 14px 12px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            color: #1f4b66;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover {
+            background: #eef3fa;
+            border-color: #ffb347;
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected {
+            background: #ffe1b3;
+            border-color: #e68a2e;
+            color: #5e2a04;
+            font-weight: 700;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+
+        /* أزرار التنقل والإجراءات */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 16px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 14px;
+        }
+
+        .nav-btn {
+            background: #eef2f7;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 44px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            color: #1f4b66;
+        }
+
+        .nav-btn.primary {
+            background: #ffb74d;
+            color: #2c2b26;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn.primary:hover {
+            background: #ffa01e;
+        }
+
+        .warning-note {
+            background: #fff3e0;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #c26b1a;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* footer معلومات إضافية */
+        .exam-footer {
+            background: #f9fbfd;
+            padding: 16px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            color: #5b7e9c;
+        }
+
+        .save-next {
+            background: #1e6f5c;
+            color: white;
+            padding: 8px 28px;
+            border-radius: 36px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .save-next:hover {
+            background: #0f5a49;
+        }
+
+        @media (max-width: 650px) {
+            .exam-header, .stats-panel, .progress-letters, .question-area, .exam-footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            .question-text {
+                font-size: 1.3rem;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-container">
+    <!-- الموقع المتبقي والتوقيت -->
+    <div class="exam-header">
+        <div class="location-badge">
+            📍 الموقع المتبقي: <strong id="remainingLocation">امتحان الجبر</strong>
+        </div>
+        <div class="time-remaining">
+            ⏱️ الوقت المتبقي: <span id="timerDisplay">20:34</span>
+        </div>
+    </div>
+
+    <!-- اسم المستخدم وإحصائيات الأسئلة -->
+    <div class="stats-panel">
+        <div class="user-info">
+            👤 اسم المستخدم: <strong>Irti</strong>
+        </div>
+        <div class="questions-summary">
+            📋 عدد الأسئلة الرئيسية: 24 &nbsp;|&nbsp; مجموع الأسئلة: 24
+        </div>
+    </div>
+
+    <!-- حالة "أ" و "ب" (تمت الإجابة / لم تتم إجابة بشكل تفصيلي) -->
+    <div class="progress-letters">
+        <div class="letter-group">
+            <span class="letter">أ</span>
+            <div class="status-badge">
+                <span class="answered-yes" id="groupAAnswered">✅ تمت الإجابة: 0</span>
+                <span class="answered-no" id="groupANotAnswered">❌ لم تتم إجابة: 12</span>
+            </div>
+        </div>
+        <div class="letter-group">
+            <span class="letter">ب</span>
+            <div class="status-badge">
+                <span class="answered-yes" id="groupBAnswered">✅ تمت الإجابة: 0</span>
+                <span class="answered-no" id="groupBNotAnswered">❌ لم تتم إجابة: 12</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- منطقة السؤال الحالي -->
+    <div class="question-area" id="questionArea">
+        <div class="q-number" id="questionNumber">رقم السؤال 1</div>
+        <div class="question-text" id="questionText">
+            إذا كان 80% من عدد سؤالين = 800، فكم يكون 50% من هذا العدد؟
+        </div>
+        <div class="options-grid" id="optionsContainer">
+            <!-- الخيارات ستدرج بواسطة JS -->
+        </div>
+        <div class="action-buttons">
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn">⟪ السابق</button>
+                <button class="nav-btn" id="nextBtn">التالي ⟫</button>
+                <button class="nav-btn primary" id="reviewBtn">⚠️ مراجعة السؤال</button>
+            </div>
+            <div class="warning-note" id="warningMsg">
+                ⚠️ تحذير: السؤال للمراجعة (يمكنك وضع علامة)
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل: الصف، التاريخ، حفظ والتالي -->
+    <div class="exam-footer">
+        <div>📚 الصف: الثالث الثانوي &nbsp;|&nbsp; 📅 التاريخ: <span id="currentDate"></span></div>
+        <button class="save-next" id="saveAndNextBtn">💾 حفظ والتالي</button>
+    </div>
+</div>
+
+<script>
+    // ------------------- إعداد بيانات الأسئلة -------------------
+    // بناءً على السؤال الموضح: "إذا كان 80% من عدد سؤالين = 800، فكم يكون 50% من هذا العدد؟"
+    // الإجابة الصحيحة: 80% من العدد = 800 ، إذا العدد = 1000 ، 50% من 1000 = 500.
+    // لكن الخيارات المعطاة: 1400,1600,1800,2000 — يبدو أن النص الأصلي ربما يحوي "80% من عدد =800" فيكون العدد 1000 و 50% =500 لكن ليس بخيارات!
+    // للتطابق مع صورة الواجهة التي تظهر خيارات (1400,1600,1800,2000) تأويل آخر: ربما "80% من عدد السؤالين =800" يعني 0.8 * (2X) =800 ؟
+    // لنفترض أن السؤال الأصلي: "80% من عدد = 800"   -> العدد =1000  والخيارات المطروحة غير دقيقة، لكن المنصة نموذجية ونضبط السؤال الأول كما هو موضح.
+    // ولكن لجعل المنصة واقعية ومتوافقة مع الخيارات الظاهرة في الصورة (1400,1600,1800,2000) سأعدل السؤال الأول ليكون منطقياً مع الخيارات.
+    // لكي يكون 50% من العدد ضمن الخيارات، إذا 80% من العدد =800 -> العدد=1000، 50%=500 ليس بالخيارات.
+    // بناءً على تجربة سؤال مشهور: "إذا كان 80% من عدد ما = 800، فما 50% من العدد؟" الجواب 500. لكن الخيارات المعروضة مختلفة، 
+    // قد يكون السؤال الأصلي مختلف: "80% من عدد = 800" ثم يطلب 50% من العدد نفسه، وعليه الخيارات تمثل أخطاء شائعة.
+    // في منصة الاختبار سأحافظ على السؤال المذكور في الصورة نصاً، ولكن أضع الإجابة الصحيحة بين الخيارات (500) غير موجود، سأضيفها.
+    // لكن بالصورة المعطاة الخيارات أربعة (1400...2000). الأجمل أن نضبط السؤال بحيث يصبح الجواب 1600 (مثلاً: 80% من 2000 = 1600 -> لا)
+    // دعونا نعدل السؤال قليلاً ليكون متسقاً: "إذا كان 80% من عدد ما يساوي 1280، فكم يساوي 50% من نفس العدد؟" 50% تكون 800, ليس مناسب.
+    // بما أن الهدف واجهة بسلوك كامل، سأجعل السؤال الأول كما هو النص الأصلي: "إذا كان 80% من عدد = 800" والجواب الصحيح هو 500.
+    // سأضيف الخيار 500 ضمن الخيارات الافتراضية بدلاً من 2000 مثلاً، ليصبح الاختبار صحيح تعليمياً. مع احترام شكل الصورة سأظهر الخيارات: 500، 1400،1600،1800.
+    // نعم هذا أفضل : 500,1400,1600,1800 (الـ 2000 أستبدلها بـ 500 كحل صحيح)
+    // كما أن المنصة تحوي 24 سؤالاً (مجموع الأسئلة 24) ونعرض الأسئلة الأخرى افتراضية كتمارين مشابهة في النمط.
+
+    // إنشاء أسئلة عامة (24 سؤالاً) السؤال الأول مطابق للصورة مع خيارات مضبوطة والإجابة الصحيحة 500.
+    const TOTAL_QS = 24;
+    let questions = [];
+
+    // السؤال القاعدة الأول
+    questions.push({
+        id: 1,
+        text: "إذا كان 80% من عدد سؤالين = 800، فكم يكون 50% من هذا العدد؟",
+        options: ["500", "1400", "1600", "1800"],
+        correct: "500",   // الحل الصحيح رياضيًا
+        category: "أ",    // التصنيف (أ أو ب) للتوزيع
+        answered: null,   // الإجابة المختارة (نص)
+        markedForReview: false
+    });
+
+    // توليد باقي الأسئلة (23 سؤال) بشكل منطقي لمحاكاة اختبار كامل، موزعة بين (أ) و (ب)
+    const categoriesCycle = ["أ", "ب"];
+    for (let i = 2; i <= TOTAL_QS; i++) {
+        let cat = categoriesCycle[(i-1) % 2];
+        let percentVal = 60 + (i * 3) % 30; // فقط لجعل الأرقام متنوعة
+        let baseNum = 400 + i * 25;
+        let correctAnsValue = ((percentVal / 100) * baseNum).toFixed(0);
+        let halfValue = (baseNum * 0.5).toFixed(0);
+        let optA = (baseNum * 0.3).toFixed(0);
+        let optB = (baseNum * 0.75).toFixed(0);
+        let optC = halfValue;
+        let optD = (baseNum * 0.9).toFixed(0);
+        let optionsArr = [optA, optB, optC, optD];
+        // تأكيد أن الخيار الصحيح هو نصف العدد
+        let correctOpt = halfValue;
+        questions.push({
+            id: i,
+            text: `إذا كان ${percentVal}% من عدد = ${(percentVal / 100 * baseNum).toFixed(0)}، فكم يكون 50% من هذا العدد؟`,
+            options: optionsArr,
+            correct: correctOpt,
+            category: cat,
+            answered: null,
+            markedForReview: false
+        });
+    }
+    // إعادة ضبط السؤال الأول بشكل دقيق:
+    questions[0] = {
+        id: 1,
+        text: "إذا كان 80% من عدد سؤالين = 800، فكم يكون 50% من هذا العدد؟",
+        options: ["500", "1400", "1600", "1800"],
+        correct: "500",
+        category: "أ",
+        answered: null,
+        markedForReview: false
+    };
+
+    // متغيرات التطبيق
+    let currentIndex = 0;        // 0-index
+    let userAnswers = [...questions]; // للنسخ
+    let reviewFlag = false;
+
+    // تحديث واجهة السؤال الحالي
+    function renderCurrentQuestion() {
+        const q = userAnswers[currentIndex];
+        document.getElementById("questionNumber").innerText = `رقم السؤال ${q.id}`;
+        document.getElementById("questionText").innerText = q.text;
+        // إظهار الخيارات
+        const optionsDiv = document.getElementById("optionsContainer");
+        optionsDiv.innerHTML = "";
+        q.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            if (q.answered === opt) btn.classList.add("selected");
+            btn.innerText = opt;
+            btn.addEventListener("click", () => {
+                // حفظ الإجابة
+                q.answered = opt;
+                // إزالة علامة المراجعة تلقائياً عند الإجابة (اختياري)
+                // لكن نحدّث الـ UI
+                renderCurrentQuestion();   // إعادة رسم للخيارات المحددة
+                updateStatsAndLetters();
+                // إزالة تحذير المراجعة إذا كان السؤال للمراجعة وتمت الإجابة يمكن ابقاء المراجعة اختيارية
+                if(q.markedForReview){
+                    // لا نزيل المراجعة تلقائياً حسب التحذير، نترك المستخدم يتحكم.
+                }
+                updateReviewMessage();
+            });
+            optionsDiv.appendChild(btn);
+        });
+        // تحديث رسالة المراجعة بناءً على حالة السؤال
+        updateReviewMessage();
+    }
+
+    function updateReviewMessage() {
+        const q = userAnswers[currentIndex];
+        const warningSpan = document.getElementById("warningMsg");
+        if (q.markedForReview) {
+            warningSpan.innerHTML = "⚠️ تحذير: السؤال للمراجعة (تم وضع علامة مراجعة)";
+            warningSpan.style.background = "#ffe0b5";
+        } else {
+            warningSpan.innerHTML = "📌 السؤال عادي | يمكنك وضع علامة مراجعة";
+            warningSpan.style.background = "#fff3e0";
+        }
+    }
+
+    // تحديث إحصائيات المجموعتين أ و ب
+    function updateStatsAndLetters() {
+        let groupA = userAnswers.filter(q => q.category === "أ");
+        let groupB = userAnswers.filter(q => q.category === "ب");
+        let aAnsweredCount = groupA.filter(q => q.answered !== null).length;
+        let aNotAnswered = groupA.length - aAnsweredCount;
+        let bAnsweredCount = groupB.filter(q => q.answered !== null).length;
+        let bNotAnswered = groupB.length - bAnsweredCount;
+
+        document.getElementById("groupAAnswered").innerHTML = `✅ تمت الإجابة: ${aAnsweredCount}`;
+        document.getElementById("groupANotAnswered").innerHTML = `❌ لم تتم إجابة: ${aNotAnswered}`;
+        document.getElementById("groupBAnswered").innerHTML = `✅ تمت الإجابة: ${bAnsweredCount}`;
+        document.getElementById("groupBNotAnswered").innerHTML = `❌ لم تتم إجابة: ${bNotAnswered}`;
+    }
+
+    // التنقل بين الأسئلة
+    function goPrev() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+        } else {
+            alert("أنت في أول الأسئلة");
+        }
+    }
+
+    function goNext() {
+        if (currentIndex < TOTAL_QS - 1) {
+            currentIndex++;
+            renderCurrentQuestion();
+        } else {
+            alert("هذا آخر سؤال في الاختبار");
+        }
+    }
+
+    // حفظ الإجابة الحالية ثم الانتقال (حفظ والتالي)
+    function saveAndNext() {
+        // السؤال الحالي محفوظ بالفعل عبر نموذج userAnswers عند الضغط على الخيار
+        // لكن نتأكد: أي اختيار تم تخزينه من خلال حدث الخيارات, ننفذ فقط الانتقال
+        if (currentIndex < TOTAL_QS - 1) {
+            currentIndex++;
+            renderCurrentQuestion();
+            updateStatsAndLetters();
+        } else {
+            alert("وصلت إلى نهاية الاختبار. أحسنت! يمكنك مراجعة الإجابات.");
+        }
+    }
+
+    // مراجعة السؤال: وضع/إزالة علامة مراجعة
+    function toggleReview() {
+        const q = userAnswers[currentIndex];
+        q.markedForReview = !q.markedForReview;
+        updateReviewMessage();
+        // إضافة تأثير بسيط (لا يتغير السؤال) لكن يمكن اظهار رسالة
+        if(q.markedForReview){
+            // يُظهر إشعار اختياري
+            const warningDiv = document.getElementById("warningMsg");
+            warningDiv.style.transition = "0.1s";
+            warningDiv.style.transform = "scale(1.01)";
+            setTimeout(()=>{warningDiv.style.transform = "";}, 200);
+        }
+    }
+
+    // مؤقت يحاكي الوقت المتبقي (20:34) ويمكن تناقص بسيط أو ثابت (ديناميكي)
+    let timeSeconds = 20 * 60 + 34; // 1234 ثانية
+    const timerElement = document.getElementById("timerDisplay");
+    function updateTimerDisplay() {
+        let mins = Math.floor(timeSeconds / 60);
+        let secs = timeSeconds % 60;
+        timerElement.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        if (timeSeconds <= 0) {
+            clearInterval(timerInterval);
+            alert("انتهى الوقت المحدد! سيتم حفظ الإجابات تلقائياً.");
+        } else {
+            timeSeconds--;
+        }
+    }
+    let timerInterval = setInterval(updateTimerDisplay, 1000);
+
+    // تحضير التاريخ الحالي
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+    document.getElementById("currentDate").innerText = formattedDate;
+
+    // إضافة أحداث الأزرار
+    document.getElementById("prevBtn").addEventListener("click", goPrev);
+    document.getElementById("nextBtn").addEventListener("click", goNext);
+    document.getElementById("saveAndNextBtn").addEventListener("click", saveAndNext);
+    document.getElementById("reviewBtn").addEventListener("click", toggleReview);
+
+    // عرض الإحصائيات الأولية + السؤال الأول
+    function init() {
+        renderCurrentQuestion();
+        updateStatsAndLetters();
+        // تحديث مؤقت لو أردنا عرض موقع متبقي وهمي
+        document.getElementById("remainingLocation").innerText = "امتحان الجبر - الفصل الأول";
+    }
+
+    init();
+</script>
+</body>
+</html>
+```
